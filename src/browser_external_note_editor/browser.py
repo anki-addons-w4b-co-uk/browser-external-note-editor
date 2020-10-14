@@ -38,6 +38,7 @@ from aqt.qt import *
 from aqt.utils import tooltip
 
 from .config import config
+from .consts import addon_path
 
 
 def hide_browser_editor(browser: Browser):
@@ -45,6 +46,21 @@ def hide_browser_editor(browser: Browser):
         return
     browser.form.splitter.widget(1).setVisible(False)
     browser.editor.setNote(None)
+
+
+def undock(editor):
+    if not "the_browser" in globals() or sip.isdeleted(the_browser) or not the_browser.editor or not the_browser.card or not the_browser.selectedCards():
+        aqt.dialogs.open("AddCards", editor.mw)
+        return
+    _on_edit_window(the_browser)
+
+
+def onSetupButtons(buttons, editor):
+    buttons.insert(0, editor.addButton(os.path.join(addon_path, "icons", "undock.png"),
+                                       "undock editor",
+                                       undock,
+                                       tip=type(buttons)))
+    return buttons
 
 
 def show_browser_editor(browser: Browser):
@@ -75,6 +91,8 @@ def _on_edit_window(browser: Browser) -> bool:
 
 def _on_setup_menus(browser):
     """Create menu entry and set attributes up"""
+    global the_browser
+    the_browser = browser
     menu = browser.form.menuEdit
     menu.addSeparator()
     a = menu.addAction("Edit in New Window")
@@ -90,3 +108,6 @@ def initialize_browser():
         browser_menus_did_init.append(_on_setup_menus)
     except (ImportError, ModuleNotFoundError, AttributeError):
         addHook("browser.setupMenus", _on_setup_menus)
+
+
+addHook("setupEditorButtons", onSetupButtons)

@@ -34,6 +34,9 @@ Addon-wide constants
 """
 
 from ._version import __version__
+import sys
+import os
+from anki import version
 
 try:
     from .data.patrons import MEMBERS_CREDITED, MEMBERS_TOP
@@ -75,3 +78,11 @@ class ADDON:
         "youtube": "https://www.youtube.com/c/glutanimate",
         "help": ""
     }
+
+
+anki21 = version.startswith("2.1.")
+sys_encoding = sys.getfilesystemencoding()
+if anki21:
+    addon_path = os.path.dirname(__file__)
+else:
+    addon_path = os.path.dirname(__file__).decode(sys_encoding)
