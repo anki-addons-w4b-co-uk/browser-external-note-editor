@@ -59,7 +59,7 @@ def onSetupButtons(buttons, editor):
     buttons.insert(0, editor.addButton(os.path.join(addon_path, "icons", "undock.png"),
                                        "undock editor",
                                        undock,
-                                       tip=type(buttons)))
+                                       tip="undock editor"))
     return buttons
 
 
